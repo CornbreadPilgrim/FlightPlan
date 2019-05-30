@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	loadingEl = document.getElementById("throbber");
 
+	// Needs airport locations
 	let userMarker = new mapboxgl.Marker()
 		.setLngLat([locInfo.longitude, locInfo.latitude])
 		.setPopup(
