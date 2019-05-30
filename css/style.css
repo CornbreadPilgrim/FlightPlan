@@ -3,12 +3,12 @@ body {
 }
 
 #nav {
+    position: absolute;
     background-color: rgb(43, 43, 43);
     top: 0;
     left: 0;
     right: 0;
-    height: 5vh;
-    min-height: 39px;
+    height: 45px;
 }
 
 #logo {
@@ -24,13 +24,12 @@ body {
 #searchbar {
     position: absolute;
     right: 10px;
-
-    top: 1vh;
+    top: 10px;
 
     background-color: grey;
     border-color: grey;
-    height: 2vh;
-    min-height: 26px;
+
+    height: 25px;
     width: 15vw;
     min-width: 170px;
 }
@@ -38,7 +37,7 @@ body {
 #map {
     background-color: lightyellow;
     width: 100%;
-    height: 95vh;
+    height: 100vh;
 }
 
 #throbber {
@@ -46,7 +45,4 @@ body {
     position: absolute;
     top: 5px;
     right: 0;
-}
-#throbber > img {
-    overflow: hidden;
 }
