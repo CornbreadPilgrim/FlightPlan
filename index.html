@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Flight Plan</title>
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js"></script>
+    <link
+        href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css"
+        rel="stylesheet"
+    />
+
+    <script src="js/map.js" type="application/javascript"></script>
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div id="map"></div>
+
+    <nav id="nav">
+        <input id="searchbar" type="text" placeholder="Search..." onkeyup="search()" />
+    </nav>
+    <div id="logo">
+        <img src="img/logoFlightPlan.png" />
+    </div>
+    <div id="throbber">
+        <img src="img/loading_1.gif" />
+    </div>
+</body>
+</html>
