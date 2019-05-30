@@ -13,6 +13,69 @@ const config = {
 mapboxgl.accessToken = config.mbaccessToken;
 
 let map = null;
+// https://www.jerriepelser.com/books/airport-explorer/mapping/clustering/
+// map.on('load',
+//         () => {
+//             map.addSource("airports",
+//                 {
+//                     type: "geojson",
+//                     data: "?handler=airports",
+//                     cluster: true, // Enable clustering
+//                     clusterRadius: 50, // Radius of each cluster when clustering points
+//                     clusterMaxZoom: 6 // Max zoom to cluster points on
+//                 });
+
+//             map.addLayer({
+//                 id: 'clusters',
+//                 type: 'circle',
+//                 source: 'airports',
+//                 paint: {
+//                     'circle-color': {
+//                         property: 'point_count',
+//                         type: 'interval',
+//                         stops: [
+//                             [0, '#41A337'],
+//                             [100, '#2D7026'],
+//                             [750, '#0B5703'],
+//                         ]
+//                     },
+//                     'circle-radius': {
+//                         property: 'point_count',
+//                         type: 'interval',
+//                         stops: [
+//                             [0, 20],
+//                             [100, 30],
+//                             [750, 40]
+//                         ]
+//                     }
+//                 }
+//             });
+
+//             map.addLayer({
+//                 id: 'cluster-count',
+//                 type: 'symbol',
+//                 source: 'airports',
+//                 filter: ['has', 'point_count'],
+//                 layout: {
+//                     'text-field': '{point_count}',
+//                     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+//                     'text-size': 12
+//                 }
+//             });
+
+//             map.addLayer({
+//                 id: 'airport',
+//                 type: 'circle',
+//                 source: 'airports',
+//                 filter: ['!has', 'point_count'],
+//                 paint: {
+//                     'circle-color': '#1EF008',
+//                     'circle-radius': 6,
+//                     'circle-stroke-width': 1,
+//                     'circle-stroke-color': '#fff'
+//                 }
+//             });
+//         });
 
 let loadingEl = null;
 let loadCount = 0;
@@ -39,13 +102,13 @@ const initMap = container => {
 
 const search  = async function() {
 	load(1);
-
+/*
 	let searchfield = document.getElementById("searchbar").value;
 	searchfield = searchfield.trim();
 
 	const data = await fetch(config.geocodeURI(searchfield));
 	const dataJson = await data.json();
-
+*/
 	load(-1);
 
 	if (dataJson.results.length > 0){
@@ -66,7 +129,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	loadingEl = document.getElementById("throbber");
 
-	/*	Mark all airports
 	let userMarker = new mapboxgl.Marker()
 		.setLngLat([locInfo.longitude, locInfo.latitude])
 		.setPopup(
@@ -75,7 +137,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 			)
 		)
 		.addTo(map)
-		.togglePopup();*/
+		.togglePopup();
+
 
 	load(0);
 });
