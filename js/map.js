@@ -1,7 +1,7 @@
 const config = {
 	mbaccessToken: "pk.eyJ1Ijoic3R1ZGVudHVzZXIiLCJhIjoiY2p3YW12dHc4MDVkaDRhcW1ieXY3cWJ6YSJ9.PGhwbEmZR7WYamtLGlGbbw",
 	mbstyle: "mapbox://styles/studentuser/cjwap1w9i0hro1docd7x935xx",
-	geocodeURI : address => {
+	geocodeURI: address => {
 		return (
 			"https://api.opencagedata.com/geocode/v1/json?q=" +
 			address +
@@ -13,6 +13,104 @@ const config = {
 mapboxgl.accessToken = config.mbaccessToken;
 
 let map = null;
+
+let loadingEl = null;
+let loadCount = 0;
+const load = function (tick) {
+	if (loadingEl != null) {
+		loadCount += tick;
+
+		if (loadCount > 0)
+			loadingEl.style.display = "block";
+		else
+			loadingEl.style.display = "none";
+	}
+};
+
+const initMap = container => {
+	const map = new mapboxgl.Map({
+		container: container,
+		style: config.mbstyle,
+		center: [-73.6103642, 45.4972159],
+		zoom: 11.05 //11.05 zoom necessary to see all airports (if more zoomed out, smaller airports will cease to appear)
+	});
+	return map;
+};
+
+const search = async function () {
+	load(1);
+	/*
+		let searchfield = document.getElementById("searchbar").value;
+		searchfield = searchfield.trim();
+	
+		const data = await fetch(config.geocodeURI(searchfield));
+		const dataJson = await data.json();
+	*/
+	load(-1);
+
+	if (dataJson.results.length > 0) {
+		const location = dataJson.results[0].geometry;
+
+		map.flyTo({
+			center: [location.lng, location.lat],
+			speed: 0.7,
+			curve: 1.2
+		});
+	}
+};
+
+let data;
+let markers = [];
+let i;
+document.addEventListener("DOMContentLoaded", async () => {
+	loadingEl = document.getElementById("throbber");
+	load(1);
+
+	map = initMap("map");
+
+	var requestURL = 'https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json';
+	var request = new XMLHttpRequest();
+	request.open('GET', requestURL);
+	request.responseType = 'json';
+	request.send();
+
+	request.onload = function () {
+		data = request.response;
+
+		const popup = new mapboxgl.Popup();
+		popup.on("open",(p) => {
+			details.style.display = "block";
+		});
+		popup.on("close",(p) => {
+			details.style.display = "none";
+		});
+
+		for (i = 0; i < data.length; i++) {
+			let marker = new mapboxgl.Marker()
+				.setLngLat([data[i].lon, data[i].lat])
+				.setPopup(popup);
+
+			marker.addTo(map);
+			markers.push(marker);
+		}
+	}
+
+	load(-1);
+});
+
+const clickedFROM = el => {
+	console.log(data[0].lon, data[0].lat);
+};
+const clickedTO = el => {
+
+};
+
+
+
+
+
+
+
 // https://www.jerriepelser.com/books/airport-explorer/mapping/clustering/
 // map.on('load',
 //         () => {
@@ -76,80 +174,3 @@ let map = null;
 //                 }
 //             });
 //         });
-
-let loadingEl = null;
-let loadCount = 0;
-const load = function(tick){
-	if (loadingEl != null){
-		loadCount += tick;
-
-		if (loadCount > 0)
-			loadingEl.style.display = "block";
-		else
-			loadingEl.style.display = "none";
-	}
-};
-
-const initMap = container => {
-	const map = new mapboxgl.Map({
-		container: container,
-		style: config.mbstyle,
-		center: [-73.6103642, 45.4972159],
-		zoom: 11.05 //11.05 zoom necessary to see all airports (if more zoomed out, smaller airports will cease to appear)
-	});
-	return map;
-};
-
-const search  = async function() {
-	load(1);
-/*
-	let searchfield = document.getElementById("searchbar").value;
-	searchfield = searchfield.trim();
-
-	const data = await fetch(config.geocodeURI(searchfield));
-	const dataJson = await data.json();
-*/
-	load(-1);
-
-	if (dataJson.results.length > 0){
-		const location = dataJson.results[0].geometry;
-
-		map.flyTo({
-			center: [location.lng, location.lat],
-			speed: 0.7,
-			curve: 1.2
-		});
-	}	
-};
-
-document.addEventListener("DOMContentLoaded", async () => {
-
-	map = initMap("map");
-	let markers = [];
-
-	loadingEl = document.getElementById("throbber");
-
-	var requestURL = 'https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json';
-	var request = new XMLHttpRequest();
-	request.open('GET', requestURL);
-	request.responseType = 'json';
-	request.send();
-
-	request.onload = function () {
-		const data = request.response;
-		for(let i = 0; i < data.length; i++){
-			new mapboxgl.Marker()
-			.setLngLat([data[i].lon, data[i].lat])/*
-			.setPopup(
-				new mapboxgl.Popup({ className: "here" }).setHTML(
-					'<h1>you are here</h1>'
-				)
-			)*/
-			.addTo(map);
-			//.togglePopup();
-
-		}
-	}
-
-	load(0);
-});
