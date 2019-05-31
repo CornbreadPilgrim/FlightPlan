@@ -61,6 +61,7 @@ const search = async function () {
 
 let data;
 let markers = [];
+let pop;
 let i;
 document.addEventListener("DOMContentLoaded", async () => {
 	loadingEl = document.getElementById("throbber");
@@ -80,6 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const popup = new mapboxgl.Popup();
 		popup.on("open",(p) => {
 			details.style.display = "block";
+			pop = p;
 		});
 		popup.on("close",(p) => {
 			details.style.display = "none";
@@ -88,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		for (i = 0; i < data.length; i++) {
 			let marker = new mapboxgl.Marker()
 				.setLngLat([data[i].lon, data[i].lat])
-				.setPopup(popup);
+				.setPopup(popup.setHTML('<input type="hidden" value="'+i+'" />'));
 
 			marker.addTo(map);
 			markers.push(marker);
@@ -99,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 const clickedFROM = el => {
-	console.log(data[0].lon, data[0].lat);
+	console.log(pop.getLngLat);
 };
 const clickedTO = el => {
 
