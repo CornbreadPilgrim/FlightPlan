@@ -129,17 +129,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	loadingEl = document.getElementById("throbber");
 
-	// Needs airport locations
-	let userMarker = new mapboxgl.Marker()
-		.setLngLat([locInfo.longitude, locInfo.latitude])
-		.setPopup(
-			new mapboxgl.Popup({ className: "here" }).setHTML(
-				'<h1>you are here</h1><img src="' + locInfo.country_flag + '" />'
-			)
-		)
-		.addTo(map)
-		.togglePopup();
+	var requestURL = 'https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json';
+	var request = new XMLHttpRequest();
+	request.open('GET', requestURL);
+	request.responseType = 'json';
+	request.send();
 
+	request.onload = function () {
+		const data = request.response;
+		for(let i = 0; i < data.length; i++){
+			new mapboxgl.Marker()
+			.setLngLat([data[i].lon, data[i].lat])/*
+			.setPopup(
+				new mapboxgl.Popup({ className: "here" }).setHTML(
+					'<h1>you are here</h1>'
+				)
+			)*/
+			.addTo(map);
+			//.togglePopup();
+
+		}
+	}
 
 	load(0);
 });
