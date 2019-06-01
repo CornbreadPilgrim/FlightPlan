@@ -18,11 +18,17 @@
 <body>
     <div id="map"></div>
 
+    <div id="flightlist">
+        <div id="listFrom"></div>
+        <div id="list"></div>
+        <div id="listTo"></div>
+    </div>
+
     <nav id="nav">
         <div id="logo">
             <img src="img/logoFlightPlan.png" />
         </div>
-        <input id="searchbar" type="text" placeholder="Search..." onkeyup="search()" />
+        <input id="searchbar" type="text" placeholder="Search..." onkeyup="search(event)" />
     </nav>
 
     <div id="throbber">
@@ -30,13 +36,13 @@
     </div>
     
 	<div id="details">
-	    <div>Airport Name</div>
-		<div>City - State - Country</div>
+	    <div id="airname">Airport Name</div>
+		<div id="airlocation">City - State - Country</div>
 		<div class="radio">
 	    	<button onclick="clickedFROM()" id="from">FROM</button>
 		    <button onclick="clickedTO()" id="to">TO</button>
 		</div>
-	</div>
+    </div>
         
 </body>
 </html>

@@ -54,6 +54,7 @@ body {
     position: absolute;
     left: 50vw;
     bottom:10vh;
+    display: none;
 
     border: 3px solid rgb(43, 43, 43);
     border-radius: 5px;
@@ -78,4 +79,48 @@ body {
 }
 #to{
     right: 5px;
+}
+
+
+#flightlist {
+    position: absolute;
+    left: 0;
+    bottom:1px;
+    top: 46px;
+    display: none;
+
+    border: 3px solid rgb(43, 43, 43);
+    border-radius: 5px;
+    background-color: rgb(43, 43, 43);
+    width: 300px;
+    color: lightgray;
+}
+#listFrom{
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 100px;
+    width: 300px;
+
+    border: 3px solid rgb(165, 165, 165);
+    border-radius: 5px 5px 0 0;
+    background-color: rgb(165, 165, 165);
+    color: rgb(43, 43, 43);
+}
+#listTo{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    height: 100px;
+    width: 300px;
+
+    border: 3px solid rgb(165, 165, 165);
+    border-radius: 0 0 5px 5px;
+    background-color: rgb(165, 165, 165);
+    color: rgb(43, 43, 43);
+}
+.centered{
+    text-align: center;
 }

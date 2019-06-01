@@ -37,32 +37,33 @@ const initMap = container => {
 	return map;
 };
 
-const search = async function () {
-	load(1);
-	/*
-		let searchfield = document.getElementById("searchbar").value;
-		searchfield = searchfield.trim();
-	
-		const data = await fetch(config.geocodeURI(searchfield));
-		const dataJson = await data.json();
-	*/
-	load(-1);
+const search = async function (event) {
+	if(event.keyCode === 13) {
+		load(1);
+		
+			let searchfield = document.getElementById("searchbar").value;
+			searchfield = searchfield.trim();
+		
+			const data = await fetch(config.geocodeURI(searchfield));
+			const dataJson = await data.json();
+		
+		load(-1);
 
-	if (dataJson.results.length > 0) {
-		const location = dataJson.results[0].geometry;
+		if (dataJson.results.length > 0) {
+			const location = dataJson.results[0].geometry;
 
-		map.flyTo({
-			center: [location.lng, location.lat],
-			speed: 0.7,
-			curve: 1.2
-		});
+			map.flyTo({
+				center: [location.lng, location.lat],
+				speed: 0.7,
+				curve: 1.2
+			});
+		}
 	}
 };
 
 let data;
-let markers = [];
-let pop;
-let i;
+let it;
+
 document.addEventListener("DOMContentLoaded", async () => {
 	loadingEl = document.getElementById("throbber");
 	load(1);
@@ -78,22 +79,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 	request.onload = function () {
 		data = request.response;
 
-		const popup = new mapboxgl.Popup();
-		popup.on("open",(p) => {
-			details.style.display = "block";
-			pop = p;
-		});
-		popup.on("close",(p) => {
-			details.style.display = "none";
-		});
+		for (let i = 0; i < data.length; i++) {
+			if(data[i].type === "Airports" || data[i].type === "Other Airport"){
 
-		for (i = 0; i < data.length; i++) {
-			let marker = new mapboxgl.Marker()
-				.setLngLat([data[i].lon, data[i].lat])
-				.setPopup(popup.setHTML('<input type="hidden" value="'+i+'" />'));
+				let popup = new mapboxgl.Popup();
+				popup.on("open",(p) => {
+					details.style.display = "block";
+					it = i;
+					
+					document.getElementById("airname").innerHTML = data[i].name;
+					document.getElementById("airlocation").innerHTML = data[i].city +" - "+  data[i].state +" - "+ data[i].country;
+				});
+				popup.on("close",(p) => {
+					details.style.display = "none";
+				});
 
-			marker.addTo(map);
-			markers.push(marker);
+				let marker = new mapboxgl.Marker()
+					.setLngLat([data[i].lon, data[i].lat])
+					.setPopup(popup);
+
+				popup.setLngLat(marker.getLngLat());
+
+				marker.addTo(map);
+
+			}
 		}
 	}
 
@@ -101,78 +110,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 const clickedFROM = el => {
-	console.log(pop.getLngLat);
+	document.getElementById("flightlist").style.display = "block";
+	const from = document.getElementById("listFrom");
+
+	const icao = getICAOcodeTO();
+	if (icao === data[it].icao)
+		document.getElementById("listTo").innerHTML = "";
+
+	from.innerHTML = '<h2 class="centered">From</h2><div id="fromAirport">'+data[it].name+' - '+data[it].icao+'</div>';
 };
 const clickedTO = el => {
+	document.getElementById("flightlist").style.display = "block";
+	const to = document.getElementById("listTo");
 
+	const icao = getICAOcodeFROM();
+	if (icao === data[it].icao)
+		document.getElementById("listFrom").innerHTML = "";
+
+	to.innerHTML = '<h2 class="centered">To</h2><div id="toAirport">'+data[it].name+' - '+data[it].icao+'</div>';
 };
 
-
-
-
-
-
-
-// https://www.jerriepelser.com/books/airport-explorer/mapping/clustering/
-// map.on('load',
-//         () => {
-//             map.addSource("airports",
-//                 {
-//                     type: "geojson",
-//                     data: "?handler=airports",
-//                     cluster: true, // Enable clustering
-//                     clusterRadius: 50, // Radius of each cluster when clustering points
-//                     clusterMaxZoom: 6 // Max zoom to cluster points on
-//                 });
-
-//             map.addLayer({
-//                 id: 'clusters',
-//                 type: 'circle',
-//                 source: 'airports',
-//                 paint: {
-//                     'circle-color': {
-//                         property: 'point_count',
-//                         type: 'interval',
-//                         stops: [
-//                             [0, '#41A337'],
-//                             [100, '#2D7026'],
-//                             [750, '#0B5703'],
-//                         ]
-//                     },
-//                     'circle-radius': {
-//                         property: 'point_count',
-//                         type: 'interval',
-//                         stops: [
-//                             [0, 20],
-//                             [100, 30],
-//                             [750, 40]
-//                         ]
-//                     }
-//                 }
-//             });
-
-//             map.addLayer({
-//                 id: 'cluster-count',
-//                 type: 'symbol',
-//                 source: 'airports',
-//                 filter: ['has', 'point_count'],
-//                 layout: {
-//                     'text-field': '{point_count}',
-//                     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-//                     'text-size': 12
-//                 }
-//             });
-
-//             map.addLayer({
-//                 id: 'airport',
-//                 type: 'circle',
-//                 source: 'airports',
-//                 filter: ['!has', 'point_count'],
-//                 paint: {
-//                     'circle-color': '#1EF008',
-//                     'circle-radius': 6,
-//                     'circle-stroke-width': 1,
-//                     'circle-stroke-color': '#fff'
-//                 }
-//             });
-//         });
+const getICAOcodeFROM = () => {
+	let fromAirport = document.getElementById("fromAirport");
+	if (fromAirport !== null){
+		fromAirport = fromAirport.innerHTML.split(" - ")[1].trim();
+		return fromAirport;
+	} else
+		return "";
+}
+const getICAOcodeTO = () => {
+	let toAirport = document.getElementById("toAirport");
+	if (toAirport !== null){
+		toAirport = toAirport.innerHTML.split(" - ")[1].trim();
+		return toAirport;
+	} else
+		return "";
+}
